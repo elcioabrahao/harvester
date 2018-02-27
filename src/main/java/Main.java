@@ -29,7 +29,7 @@ public class Main {
      * @throws OWLOntologyCreationException */
     @Test
     public void shouldUseReasoner() throws OWLOntologyCreationException {
-        String DOCUMENT_IRI = "http://owl.cs.manchester.ac.uk/repository/download?ontology=file:/Users/seanb/Desktop/Cercedilla2005/hands-on/people.owl&format=RDF/XML";
+        String DOCUMENT_IRI = "http://protege.stanford.edu/ontologies/pizza/pizza.owl";
         // Create our ontology manager in the usual way.
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         // Load a copy of the people+pets ontology. We'll load the ontology from
@@ -110,13 +110,13 @@ public class Main {
         // Get a reference to the vegetarian class so that we can as the
         // reasoner about it. The full IRI of this class happens to be:
         // <http://owl.man.ac.uk/2005/07/sssw/people#vegetarian>
-        OWLClass vegPizza = fac.getOWLClass(IRI
-                .create("http://owl.man.ac.uk/2005/07/sssw/people#vegetarian"));
+        OWLClass namedPizza = fac.getOWLClass(IRI
+                .create("http://www.co-ode.org/ontologies/pizza/pizza.owl#NamedPizza"));
         // Now use the reasoner to obtain the subclasses of vegetarian. We can
         // ask for the direct subclasses of vegetarian or all of the (proper)
         // subclasses of vegetarian. In this case we just want the direct ones
         // (which we specify by the "true" flag).
-        NodeSet<OWLClass> subClses = reasoner.getSubClasses(vegPizza, true);
+        NodeSet<OWLClass> subClses = reasoner.getSubClasses(namedPizza, true);
         // The reasoner returns a NodeSet, which represents a set of Nodes. Each
         // node in the set represents a subclass of vegetarian pizza. A node of
         // classes contains classes, where each class in the node is equivalent.
@@ -128,7 +128,7 @@ public class Main {
         // the equivalences, so we will flatten this set of sets and print the
         // result
         Set<OWLClass> clses = subClses.getFlattened();
-        System.out.println("Subclasses of vegetarian: ");
+        System.out.println("Subclasses of namedPizza: ");
         for (OWLClass cls : clses) {
             System.out.println("    " + cls);
         }
@@ -144,7 +144,7 @@ public class Main {
         // <http://owl.man.ac.uk/2005/07/sssw/people#pet> We need to obtain a
         // reference to this class so that we can ask the reasoner about it.
         OWLClass country = fac.getOWLClass(IRI
-                .create("http://owl.man.ac.uk/2005/07/sssw/people#pet"));
+                .create("http://www.co-ode.org/ontologies/pizza/pizza.owl#Country"));
         // Ask the reasoner for the instances of pet
         NodeSet<OWLNamedIndividual> individualsNodeSet = reasoner.getInstances(country,
                 true);
@@ -152,7 +152,7 @@ public class Main {
         // individuals. Again, we just want the individuals, so get a flattened
         // set.
         Set<OWLNamedIndividual> individuals = individualsNodeSet.getFlattened();
-        System.out.println("Instances of pet: ");
+        System.out.println("Instances of country named pizza: ");
         for (OWLNamedIndividual ind : individuals) {
             System.out.println("    " + ind);
         }
@@ -164,17 +164,22 @@ public class Main {
         // individual Mick, the full IRI of which is
         // <http://owl.man.ac.uk/2005/07/sssw/people#Mick> Get a reference to
         // the individual Mick
-        OWLNamedIndividual mick = fac.getOWLNamedIndividual(IRI
-                .create("http://owl.man.ac.uk/2005/07/sssw/people#Mick"));
+
+
+
+
+
+        OWLNamedIndividual pizza = fac.getOWLNamedIndividual(IRI
+                .create("http://www.co-ode.org/ontologies/pizza/pizza.owl#FruttiDiMare"));
         // Let's get the pets of Mick Get hold of the has_pet property which has
         // a full IRI of <http://owl.man.ac.uk/2005/07/sssw/people#has_pet>
-        OWLObjectProperty hasPet = fac.getOWLObjectProperty(IRI
-                .create("http://owl.man.ac.uk/2005/07/sssw/people#has_pet"));
+        OWLObjectProperty hasTopping = fac.getOWLObjectProperty(IRI
+                .create("http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping"));
         // Now ask the reasoner for the has_pet property values for Mick
-        NodeSet<OWLNamedIndividual> petValuesNodeSet = reasoner.getObjectPropertyValues(
-                mick, hasPet);
-        Set<OWLNamedIndividual> values = petValuesNodeSet.getFlattened();
-        System.out.println("The has_pet property values for Mick are: ");
+        NodeSet<OWLNamedIndividual> pizzaValuesNodeSet = reasoner.getObjectPropertyValues(
+                pizza, hasTopping);
+        Set<OWLNamedIndividual> values = pizzaValuesNodeSet.getFlattened();
+        System.out.println("The has_ingredient property values for Country Named pizza are: ");
         for (OWLNamedIndividual ind : values) {
             System.out.println("    " + ind);
         }
@@ -182,8 +187,10 @@ public class Main {
         // ontology. Finally, let's print out the class hierarchy. Get hold of
         // the top node in the class hierarchy (containing owl:Thing) Now print
         // the hierarchy out
-        Node<OWLClass> topNode = reasoner.getTopClassNode();
-        print(topNode, reasoner, 0);
+
+//        System.out.println("All Ontology: ");
+//        Node<OWLClass> topNode = reasoner.getTopClassNode();
+//        print(topNode, reasoner, 0);
     }
 
     private static void print(Node<OWLClass> parent, OWLReasoner reasoner, int depth) {
@@ -215,7 +222,7 @@ public class Main {
 
     private static void printNode(Node<OWLClass> node) {
         DefaultPrefixManager pm = new DefaultPrefixManager(
-                "http://owl.man.ac.uk/2005/07/sssw/people#");
+                "http://www.co-ode.org/ontologies/pizza/pizza.owl#");
         // Print out a node as a list of class names in curly brackets
         System.out.print("{");
         for (Iterator<OWLClass> it = node.getEntities().iterator(); it.hasNext();) {
